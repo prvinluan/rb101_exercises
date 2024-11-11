@@ -47,50 +47,50 @@
 
 # C - CODE
 
-def print(message)
+def prompt(message)
   Kernel.puts("=> #{message}")
 end
 
 percent = 0.01
 months = 12
 
-print("WELCOME TO THE MORTGAGE CALCULATOR")
-print("**********************************")
+prompt("WELCOME TO THE MORTGAGE CALCULATOR")
+prompt("**********************************")
 
 loop do
   loan_amount = nil
   loop do
-    print("Enter loan amount: ")
+    prompt("Enter loan amount: ")
     loan_amount = Kernel.gets().chomp()
     if loan_amount.to_i.to_s == loan_amount
       loan_amount = loan_amount.to_f
       break loan_amount
     else
-      print("Invalid input - try again!")
+      prompt("Invalid input - try again!")
     end
   end
 
   apr = nil
   loop do
-    print("Enter APR: ")
+    prompt("Enter APR: ")
     apr = Kernel.gets().chomp()
     if apr.to_i.to_s == apr
       apr = apr.to_i
       break apr
     else
-      print("Invalid input - try again!")
+      prompt("Invalid input - try again!")
     end
   end
 
   loan_duration = nil
   loop do
-    print("Enter loan duration: ")
+    prompt("Enter loan duration: ")
     loan_duration = Kernel.gets().chomp()
     if loan_duration.to_i.to_s == loan_duration
       loan_duration = loan_duration.to_i
       break loan_duration
     else
-      print("Invalid input - try again!")
+      prompt("Invalid input - try again!")
     end
   end
 
@@ -101,10 +101,10 @@ loop do
                     (monthly_interest /
                     (1 - (1 + monthly_interest)**(-loan_duration_months)))
 
-  print("LOAN AMOUNT: #{loan_amount}")
-  print("APR: #{apr} %")
-  print("LOAN DURATION: #{loan_duration} years")
-  print("MONTHLY PAYMENT: $#{monthly_payment.round(2)}")
+  prompt("LOAN AMOUNT: #{loan_amount}")
+  prompt("APR: #{apr} %")
+  prompt("LOAN DURATION: #{loan_duration} years")
+  prompt("MONTHLY PAYMENT: $#{monthly_payment.round(2)}")
 
   print("Would you like to calculate another one? Type 'y': ")
   continue = gets.chomp.downcase
