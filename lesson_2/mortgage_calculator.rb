@@ -51,6 +51,19 @@ def prompt(message)
   Kernel.puts("=> #{message}")
 end
 
+def integer?(input)
+  input.to_i.to_s == input
+end
+
+# def float?(input)
+#   input.to_f.to_s == input
+# end
+
+# Regex
+def float?(input)
+  /\d/.match(input) && /^-?\d*\.?\d*$/.match(input)
+end
+
 percent = 0.01
 months = 12
 
@@ -62,7 +75,7 @@ loop do
   loop do
     prompt("Enter loan amount: ")
     loan_amount = Kernel.gets().chomp()
-    if loan_amount.to_i.to_s == loan_amount
+    if integer?(loan_amount) || float?(loan_amount)
       loan_amount = loan_amount.to_f
       break loan_amount
     else
@@ -73,8 +86,9 @@ loop do
   apr = nil
   loop do
     prompt("Enter APR: ")
+    prompt("Only enter numbers like 6 for 6%")
     apr = Kernel.gets().chomp()
-    if apr.to_i.to_s == apr
+    if integer?(apr)
       apr = apr.to_i
       break apr
     else
@@ -84,9 +98,9 @@ loop do
 
   loan_duration = nil
   loop do
-    prompt("Enter loan duration: ")
+    prompt("Enter loan duration in years: ")
     loan_duration = Kernel.gets().chomp()
-    if loan_duration.to_i.to_s == loan_duration
+    if integer?(loan_duration)
       loan_duration = loan_duration.to_i
       break loan_duration
     else
@@ -96,20 +110,20 @@ loop do
 
   loan_duration_months = loan_duration * months
   monthly_interest = (apr * percent) / months
+  # APR for monthly payment formula broken down to 3 parts
+  compound_interest = (1 + monthly_interest)**(-loan_duration_months)
+  interest = monthly_interest / (1 - compound_interest)
+  monthly_payment = loan_amount * interest
 
-  monthly_payment = loan_amount *
-                    (monthly_interest /
-                    (1 - (1 + monthly_interest)**(-loan_duration_months)))
-
-  prompt("LOAN AMOUNT: #{loan_amount}")
+  prompt("LOAN AMOUNT: $#{loan_amount}")
   prompt("APR: #{apr} %")
   prompt("LOAN DURATION: #{loan_duration} years")
   prompt("MONTHLY PAYMENT: $#{monthly_payment.round(2)}")
 
-  print("Would you like to calculate another one? Type 'y': ")
+  prompt("Would you like to calculate another one? Type 'y': ")
   continue = gets.chomp.downcase
   break if continue != 'y'
 end
 
-print("********")
-print("GOODBYE!")
+prompt("********")
+prompt("GOODBYE!")
