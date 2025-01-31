@@ -47,8 +47,17 @@
 
 # C - CODE
 
+PERCENT = 0.01
+MONTHS = 12
+
 def prompt(message)
   Kernel.puts("=> #{message}")
+end
+
+def continue?
+  prompt("Would you like to calculate another one? Type 'y': ")
+  continue = gets.chomp.downcase
+  continue == "y"
 end
 
 def integer?(input)
@@ -64,25 +73,21 @@ def float?(input)
   /\d/.match(input) && /^-?\d*\.?\d*$/.match(input)
 end
 
-percent = 0.01
-months = 12
-
-prompt("WELCOME TO THE MORTGAGE CALCULATOR")
-prompt("**********************************")
-
-loop do
+def input_loan
   loan_amount = nil
   loop do
     prompt("Enter loan amount: ")
     loan_amount = Kernel.gets().chomp()
     if integer?(loan_amount) || float?(loan_amount)
       loan_amount = loan_amount.to_f
-      break loan_amount
+      return loan_amount
     else
       prompt("Invalid input - try again!")
     end
   end
+end
 
+def input_apr
   apr = nil
   loop do
     prompt("Enter APR: ")
@@ -90,40 +95,68 @@ loop do
     apr = Kernel.gets().chomp()
     if integer?(apr)
       apr = apr.to_i
-      break apr
+      return apr
     else
       prompt("Invalid input - try again!")
     end
   end
+end
 
+def input_loan_duration
   loan_duration = nil
   loop do
     prompt("Enter loan duration in years: ")
     loan_duration = Kernel.gets().chomp()
     if integer?(loan_duration)
       loan_duration = loan_duration.to_i
-      break loan_duration
+      return loan_duration
     else
       prompt("Invalid input - try again!")
     end
   end
+end
 
-  loan_duration_months = loan_duration * months
-  monthly_interest = (apr * percent) / months
-  # APR for monthly payment formula broken down to 3 parts
-  compound_interest = (1 + monthly_interest)**(-loan_duration_months)
+def loan_duration_months(loan_duration)
+  loan_duration * MONTHS
+end
+
+def monthly_interest(apr)
+  (apr * PERCENT) / MONTHS
+end
+
+def monthly_payment(monthly_interest, loan_duration, loan)
+  compound_interest = (1 + monthly_interest)**(-loan_duration)
   interest = monthly_interest / (1 - compound_interest)
-  monthly_payment = loan_amount * interest
+  loan * interest # monthly payment
+end
 
-  prompt("LOAN AMOUNT: $#{loan_amount}")
+def mortgage_numbers(loan, apr, loan_duration, monthly_payment)
+  prompt("LOAN AMOUNT: $#{loan}")
   prompt("APR: #{apr} %")
   prompt("LOAN DURATION: #{loan_duration} years")
   prompt("MONTHLY PAYMENT: $#{monthly_payment.round(2)}")
-
-  prompt("Would you like to calculate another one? Type 'y': ")
-  continue = gets.chomp.downcase
-  break if continue != 'y'
 end
 
-prompt("********")
-prompt("GOODBYE!")
+def mortgage_calculator
+  prompt("WELCOME TO THE MORTGAGE CALCULATOR")
+  prompt("**********************************")
+
+  loop do
+    loan = input_loan
+    apr = input_apr
+    loan_duration = input_loan_duration
+
+    monthly_payment = monthly_payment(monthly_interest(apr),
+                                      loan_duration_months(loan_duration),
+                                      loan)
+
+    mortgage_numbers(loan, apr, loan_duration, monthly_payment)
+
+    break if continue? == false
+  end
+
+  prompt("********")
+  prompt("GOODBYE!")
+end
+
+mortgage_calculator
